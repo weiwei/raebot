@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from model import Word
+from .model import Word
 
 BASE_URL = "https://dle.rae.es"
 session = requests.session()
