@@ -1,6 +1,6 @@
 import requests
 from bs4 import BeautifulSoup
-from .model import Word
+from .model import Definition, Phrase, Word
 
 BASE_URL = "https://dle.rae.es"
 session = requests.session()
@@ -14,8 +14,27 @@ def search_words(word: str):
     if entries:
         words = []
         for entry in entries:
-            wd = Word(entry)
-            words.append(wd)
+            linked_entries = entry.find_all('p', {'class': ['l', 'l3']})
+            if linked_entries:
+                for linked in linked_entries:
+                    path = linked.find('a').attrs['href']
+                    id = path.split('#')[1]
+                    url = f"{BASE_URL}{path}"
+                    resp = session.get(url)
+                    soup = BeautifulSoup(resp.text, 'html.parser')
+                    entry = soup.select(f'#{id}')
+                    if entry:
+                        if entry[0].attrs['class'] == ['k5'] or entry[0].attrs['class'] == ['k6']:
+                            # Entry is a phrase
+                            ph = entry[0].text
+                            defi = Definition(entry[0].find_next_sibling('p', {'class': 'm'}))
+                            wd = Phrase(ph, defi)
+                        else:
+                            wd = Word(entry[0])
+                        words.append(wd)
+            else:
+                wd = Word(entry)
+                words.append(wd)
         return words
     else:
         others = soup.select('#resultados > .otras > .n1 > a')

@@ -1,6 +1,6 @@
 [tool.poetry]
 name = "raebot"
-version = "0.1.2"
+version = "0.1.5"
 description = "A library that fetches definitions from the DLE"
 authors = ["Weiwei Wang"]
 readme = "README.md"

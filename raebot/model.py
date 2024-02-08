@@ -17,8 +17,6 @@ class Definition:
     definition: str
     examples: Optional[List[str]]
     def __init__(self, soup: Tag):
-        self.synonyms = []
-        self.antonyms = []
         ordinal = soup.find('span', {'class': 'n_acep'})
         types = ordinal.find_next_siblings('abbr', {'class': ['d', 'g']})
         ordinal.decompose()
@@ -64,13 +62,13 @@ class DefinitionX:
 
 @dataclass()
 class Phrase:
-    phrase: str
+    text: str
     definition: [Definition]
 
 
 @dataclass()
 class Word:
-    word: str
+    text: str
     etymology: str
     definitions: [DefinitionX]
     phrases: Optional[List[Phrase]]
@@ -80,7 +78,7 @@ class Word:
         sub = header.find("sup")
         if sub:
             sub.decompose()
-        self.word = header.text
+        self.text = header.text
         self.etymology = soup.find('p', {'class': 'n2'}).text
         self.definitions = [DefinitionX(sp) for sp in soup.find_all('p', {'class': 'j'})]
         phrases: List[Tag] = [ph for ph in soup.find_all('p', {'class': ['k5', 'k6', 'm']})]
