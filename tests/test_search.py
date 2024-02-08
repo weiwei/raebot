@@ -14,3 +14,6 @@ def test_search_words3():
 
 def test_search_words4():
     assert len(search_words("disparajuste")) == 0
+
+def test_search_words5():
+    assert len(search_words("fallecio")) == 2

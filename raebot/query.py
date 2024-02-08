@@ -37,17 +37,31 @@ def search_words(word: str):
                 words.append(wd)
         return words
     else:
+        # Search for Allen, found "llave Allen"
         others = soup.select('#resultados > .otras > .n1 > a')
-        words = []
-        for o in others:
-            path = o.attrs['href']
-            id = path.split('#')[1]
-            url = f"{BASE_URL}{path}"
-            resp = session.get(url)
-            soup = BeautifulSoup(resp.text, 'html.parser')
-            entry = soup.select(f'article#{id}')
-            wd = Word(entry[0])
-            words.append(wd)
+        if others:
+            words = []
+            for o in others:
+                path = o.attrs['href']
+                id = path.split('#')[1]
+                url = f"{BASE_URL}{path}"
+                resp = session.get(url)
+                soup = BeautifulSoup(resp.text, 'html.parser')
+                entry = soup.select(f'article#{id}')
+                wd = Word(entry[0])
+                words.append(wd)
+        else:
+            # Search for fallecio, found fallecer and fallecido
+            words = []
+            links = soup.select('#resultados > .item-list > .n1 > a')
+            for link in links:
+                path = link.attrs['href']
+                url = f"{BASE_URL}{path}"
+                resp = session.get(url)
+                soup = BeautifulSoup(resp.text, 'html.parser')
+                entry = soup.select(f'article')
+                wd = Word(entry[0])
+                words.append(wd)
         return words
 
 
