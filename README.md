@@ -11,6 +11,24 @@ intuitive. Also, most importantly for me, synonym and antonym support.
 pip install raebot
 ```
 
+## Develop
+
+- Install poetry.
+- Create a virtual environment
+- run `poetry install` to install the dependencies.
+
+TDD recommended. Add a case, then update the script to make the test pass.
+
+PRs welcome.
+
+## Testing
+
+Run `poetry run pytest` to run the tests.
+
+## Publish
+
+If you are Weiwei or one of his robots, run `poetry publish --build` to publish a new version.
+
 ## Usage
 
 ```python
