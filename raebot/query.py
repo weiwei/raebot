@@ -14,30 +14,34 @@ def search_words(word: str):
     if entries:
         words = []
         for entry in entries:
-            linked_entries = entry.find_all('p', {'class': ['l', 'l3']})
-            if linked_entries:
-                for linked in linked_entries:
-                    path = linked.find('a').attrs['href']
-                    id = path.split('#')[1]
-                    url = f"{BASE_URL}{path}"
-                    resp = session.get(url)
-                    soup = BeautifulSoup(resp.text, 'html.parser')
-                    entry = soup.select(f'#{id}')
-                    if entry:
-                        if entry[0].attrs['class'] == ['k5'] or entry[0].attrs['class'] == ['k6']:
-                            # Entry is a phrase
-                            ph = entry[0].text
-                            defi = Definition(entry[0].find_next_sibling('p', {'class': 'm'}))
-                            wd = Phrase(ph, defi)
-                        else:
-                            wd = Word(entry[0])
-                        words.append(wd)
-            else:
+            try:
                 wd = Word(entry)
                 words.append(wd)
+            except:
+                header = entry.find('header')
+                linked_entries = header.find_next_siblings('p', {'class': ['l', 'l3', 'b']})
+                if linked_entries:
+                    # Search for Allen, found "llave Allen"
+                    for linked in linked_entries:
+                        path = linked.find('a').attrs['href']
+                        id = path.split('#')[1]
+                        url = f"{BASE_URL}{path}"
+                        resp = session.get(url)
+                        soup = BeautifulSoup(resp.text, 'html.parser')
+                        entries = soup.find_all('p', {'id': id})
+                        if entries:
+                            if entries[0].attrs['class'] == ['k5'] or entries[0].attrs['class'] == ['k6']:
+                                # Entry is a phrase
+                                ph = entries[0].text
+                                defi = Definition(entries[0].find_next_sibling('p', {'class': 'm'}))
+                                # TODO: support multiple defs
+                                wd = Phrase(ph, [defi])
+                            else:
+                                wd = Word(entry[0])
+                            words.append(wd)
+
         return words
     else:
-        # Search for Allen, found "llave Allen"
         others = soup.select('#resultados > .otras > .n1 > a')
         if others:
             words = []
@@ -47,7 +51,7 @@ def search_words(word: str):
                 url = f"{BASE_URL}{path}"
                 resp = session.get(url)
                 soup = BeautifulSoup(resp.text, 'html.parser')
-                entry = soup.select(f'article#{id}')
+                entry = soup.find_all("article", {"id": id})
                 wd = Word(entry[0])
                 words.append(wd)
         else:

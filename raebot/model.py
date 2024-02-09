@@ -63,7 +63,7 @@ class DefinitionX:
 @dataclass()
 class Phrase:
     text: str
-    definition: [Definition]
+    definitions: [Definition]
 
 
 @dataclass()
@@ -79,7 +79,11 @@ class Word:
         if sub:
             sub.decompose()
         self.text = header.text
-        self.etymology = soup.find('p', {'class': 'n2'}).text
+        ety = soup.find('p', {'class': 'n2'})
+        if ety:
+            self.etymology = ety.text
+        else:
+            ety = ""
         self.definitions = [DefinitionX(sp) for sp in soup.find_all('p', {'class': 'j'})]
         phrases: List[Tag] = [ph for ph in soup.find_all('p', {'class': ['k5', 'k6', 'm']})]
         defs = []
