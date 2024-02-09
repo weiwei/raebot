@@ -7,7 +7,7 @@ session = requests.session()
 session.headers.update({'User-Agent': 'Mozilla/5.0'})
 
 
-def search_words(word: str):
+def by_words(word: str):
     resp = session.get(f"{BASE_URL}/{word}?m=form")
     soup = BeautifulSoup(resp.text, 'html.parser')
     entries = soup.select('#resultados > article')
@@ -69,8 +69,8 @@ def search_words(word: str):
         return words
 
 
-def search_expressions(expr: str):
-    resp = session.get(f"{BASE_URL}/{word}?m=form2")
+def by_expressions(expr: str):
+    resp = session.get(f"{BASE_URL}/{expr}?m=form2")
     soup = BeautifulSoup(resp.text, 'html.parser')
     entries = soup.select('#resultados > article')
     words = []
@@ -82,10 +82,10 @@ def search_expressions(expr: str):
 def exact_match():
     pass
 
-def start_with():
+def starts_with():
     pass
 
-def end_with():
+def ends_with():
     pass
 
 def contains():
